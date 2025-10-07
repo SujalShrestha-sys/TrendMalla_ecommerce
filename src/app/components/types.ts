@@ -1,5 +1,5 @@
 export type ProductType = {
-    id: String | number;
+    id: string | number;
     name: string;
     shortDescription: string,
     description: string,
@@ -10,3 +10,11 @@ export type ProductType = {
 }
 
 export type ProductsType = ProductType[];
+
+export type CartItemType = ProductType & {
+    quantity: number,
+    selectedSize: string,
+    selectedColor: string
+}
+
+export type CartItemsType = CartItemType[];
