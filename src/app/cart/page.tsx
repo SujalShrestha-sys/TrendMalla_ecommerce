@@ -1,29 +1,30 @@
-"use client"
-import React, { useState } from 'react'
-import { CartItemsType } from '../components/types'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { ArrowRight, Trash2 } from 'lucide-react'
-import ShippingForm from '../components/ShippingForm'
-import PaymentForm from '../components/PaymentForm'
-import Image from 'next/image'
-
+"use client";
+import React, { useState } from "react";
+import { CartItemsType } from "../components/types";
+import { useSearchParams, useRouter } from "next/navigation";
+import { ArrowRight, Trash2 } from "lucide-react";
+import PaymentForm from "../components/PaymentForm";
+import Image from "next/image";
+import ShippingForm from "../components/ShippingForm";
+import { ShippingFormInputs } from "../components/types";
+import useStore from "@/stores/cartStore";
 
 const steps = [
     {
         id: 1,
-        title: "Shopping Cart"
+        title: "Shopping Cart",
     },
     {
         id: 2,
-        title: "Shipping Address"
+        title: "Shipping Address",
     },
     {
         id: 3,
-        title: "Payment Method"
+        title: "Payment Method",
     },
-]
+];
 
-const cartItems: CartItemsType = [
+/* const cartItems: CartItemsType = [
     {
         id: 1,
         name: "Adidas CoreFit T-Shirt",
@@ -41,7 +42,7 @@ const cartItems: CartItemsType = [
         },
         quantity: 1,
         selectedSize: "m",
-        selectedColor: "gray"
+        selectedColor: "gray",
     },
     {
         id: 2,
@@ -56,7 +57,7 @@ const cartItems: CartItemsType = [
         images: { gray: "/products/2g.png", green: "/products/2gr.png" },
         quantity: 1,
         selectedSize: "l",
-        selectedColor: "green"
+        selectedColor: "green",
     },
     {
         id: 3,
@@ -75,94 +76,146 @@ const cartItems: CartItemsType = [
         },
         quantity: 1,
         selectedSize: "s",
-        selectedColor: "blue"
+        selectedColor: "blue",
     },
-]
+]; */
 
 const CartPage = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [shippingForm, setShippingForm] = useState(null);
+    const [shippingForm, setShippingForm] = useState<ShippingFormInputs>();
 
-    const activeStep = parseInt(searchParams.get("step") || "1")
+    const activeStep = parseInt(searchParams.get("step") || "1");
+
+    const { cart, removeFromCart } = useStore();
     return (
-        <div className='flex flex-col gap-8 items-center justify-center mt-12'>
+        <div className="flex flex-col gap-8 items-center justify-center mt-12">
             {/**Title */}
-            <h1 className='text-2xl font-medium'>Your Shopping Cart</h1>
+            <h1 className="text-2xl font-medium">Your Shopping Cart</h1>
 
             {/**Steps */}
-            <div className='flex flex-col lg:flex-row items-center gap-8 lg:gap-16'>{steps.map(step => (
-                <div key={step.id} className={`flex items-center gap-2 border-b-2 pb-4 ${step.id === activeStep ? "border-gray-800" : "border-gray-200"}`}>
-                    <div className={`w-6 h-6 rounded-full text-white p-4 flex items-center justify-center ${step.id === activeStep ? "bg-gray-800" : "bg-gray-200"}`}>{step.id}</div>
-                    <p className={`text-sm font-medium ${step.id === activeStep ? "text-gray-800" : "text-gray-400"}`}>{step.title}</p>
-                </div>
-            ))}</div>
+            <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+                {steps.map((step) => (
+                    <div
+                        key={step.id}
+                        className={`flex items-center gap-2 border-b-2 pb-4 ${step.id === activeStep ? "border-gray-800" : "border-gray-200"
+                            }`}
+                    >
+                        <div
+                            className={`w-6 h-6 rounded-full text-white p-4 flex items-center justify-center ${step.id === activeStep ? "bg-gray-800" : "bg-gray-200"
+                                }`}
+                        >
+                            {step.id}
+                        </div>
+                        <p
+                            className={`text-sm font-medium ${step.id === activeStep ? "text-gray-800" : "text-gray-400"
+                                }`}
+                        >
+                            {step.title}
+                        </p>
+                    </div>
+                ))}
+            </div>
 
             {/**Steps and details */}
-            <div className='w-full flex flex-col lg:flex-row gap-16'>
+            <div className="w-full flex flex-col lg:flex-row gap-16">
                 {/**Steps */}
-                <div className='w-full lg:w-7/12 shadow-lg border-1 border-gray-100 p-8 rounded-lg flex flex-col gap-8'>
+                <div className="w-full lg:w-7/12 shadow-lg border-1 border-gray-100 p-8 rounded-lg flex flex-col gap-8">
                     {activeStep === 1 ? (
-                        cartItems.map(item => (
+                        cart.map((item) => (
                             //Single cart items
-                            <div key={item.id} className='flex items-center justify-between' >
+                            <div key={item.id + item.selectedColor + item.selectedSize} className="flex items-center justify-between">
                                 {/**Image and Details */}
-                                <div className='flex gap-8'>
-                                    <div className='relative w-32 h-32 bg-gray-50 rounded-lg overflow-hidden'>
+                                <div className="flex gap-8">
+                                    <div className="relative w-32 h-32 bg-gray-50 rounded-lg overflow-hidden">
                                         {/**Image */}
-                                        <Image src={item.images[item.selectedColor]} alt={item.name} fill className='object-contain'
+                                        <Image
+                                            src={item.images[item.selectedColor]}
+                                            alt={item.name}
+                                            fill
+                                            className="object-contain"
                                         />
                                     </div>
 
                                     {/**Item details */}
-                                    <div className='flex flex-col justify-between'>
-                                        <div className='flex flex-col gap-1'>
-                                            <p className='text-sm font-medium'>{item.name}</p>
-                                            <p className='text-xs text-gray-500'>Quantity:{" "}{item.quantity}</p>
-                                            <p className='text-xs text-gray-500'>Size:{" "}{item.selectedSize}</p>
-                                            <p className='text-xs text-gray-500'>Color:{" "}{item.selectedColor}</p>
-
+                                    <div className="flex flex-col justify-between">
+                                        <div className="flex flex-col gap-1">
+                                            <p className="text-sm font-medium">{item.name}</p>
+                                            <p className="text-xs text-gray-500">
+                                                Quantity: {item.quantity}
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                                Size: {item.selectedSize}
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                                Color: {item.selectedColor}
+                                            </p>
                                         </div>
-                                        <p className='font-medium'>${item.price}</p>
+                                        <p className="font-medium">${item.price}</p>
                                     </div>
                                 </div>
                                 {/**Delete Button */}
-                                <button className='w-8 h-8 rounded-full bg-red-100 text-red-400 flex items-center justify-center cursor-pointer hover:bg-red-200 transition-all duration-300'>
-                                    <Trash2 className='w-3 h-3' />
+                                <button onClick={() => removeFromCart(item)} className="w-8 h-8 rounded-full bg-red-100 text-red-400 flex items-center justify-center cursor-pointer hover:bg-red-200 transition-all duration-300">
+                                    <Trash2 className="w-3 h-3" />
                                 </button>
                             </div>
                         ))
-                    ) : activeStep === 2 ? <ShippingForm /> : activeStep === 3 && shippingForm ? <PaymentForm /> : <p className='text-sm text-gray-500'>Please fill in the shipping form  to continue</p>}
+                    ) : activeStep === 2 ? (
+                        <ShippingForm setShippingForm={setShippingForm} />
+                    ) : activeStep === 3 && shippingForm ? (
+                        <PaymentForm />
+                    ) : (
+                        <p className="text-sm text-gray-500">
+                            Please fill in the shipping form to continue
+                        </p>
+                    )}
                 </div>
                 {/**Details */}
-                <div className='w-full lg:w-5/12 shadow-lg border-1 border-gray-100 p-8 rounded-lg flex flex-col gap-8'>
-                    <h2 className='font-semibold'>Cart Details</h2>
-                    <div className='flex flex-col gap-4'>
-                        <div className='flex justify-between text-sm'>
-                            <p className='text-gray-500'>SubTotal:</p>
-                            <p className='font-medium'>${cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2)}</p>
+                <div className="w-full lg:w-5/12 shadow-lg border-1 border-gray-100 p-8 rounded-lg flex flex-col gap-8">
+                    <h2 className="font-semibold">Cart Details</h2>
+                    <div className="flex flex-col gap-4">
+                        <div className="flex justify-between text-sm">
+                            <p className="text-gray-500">SubTotal:</p>
+                            <p className="font-medium">
+                                $
+                                {cart
+                                    .reduce((acc, item) => acc + item.price * item.quantity, 0)
+                                    .toFixed(2)}
+                            </p>
                         </div>
 
-                        <div className='flex justify-between text-sm'>
-                            <p className='text-gray-500'>Discount(10%)</p>
-                            <p className='font-medium'>$10</p>
+                        <div className="flex justify-between text-sm">
+                            <p className="text-gray-500">Discount(10%)</p>
+                            <p className="font-medium">$10</p>
                         </div>
-                        <div className='flex justify-between text-sm'>
-                            <p className='text-gray-500'>Shipping Fee</p>
-                            <p className='font-medium'>$ 10</p>
+                        <div className="flex justify-between text-sm">
+                            <p className="text-gray-500">Shipping Fee</p>
+                            <p className="font-medium">$ 10</p>
                         </div>
-                        <hr className='border-gray-200' />
+                        <hr className="border-gray-200" />
 
-                        <div className='flex justify-between'>
-                            <p className='text-gray-800 font-semibold'>Total</p>
-                            <p className='font-medium'>$ {cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2)}</p>
+                        <div className="flex justify-between">
+                            <p className="text-gray-800 font-semibold">Total</p>
+                            <p className="font-medium">
+                                ${" "}
+                                {cart
+                                    .reduce((acc, item) => acc + item.price * item.quantity, 0)
+                                    .toFixed(2)}
+                            </p>
                         </div>
-
                     </div>
-                    {activeStep === 1 && <button onClick={() => router.push("/cart?step=2", { scroll: false })} className='w-full bg-gray-700 hover:bg-gray-900 transition-all duration-300  text-white p-2 rounded-lg cursor-pointer flex items-center justify-center gap-2'>Continue <ArrowRight className='w-3 h-3' /></button>}</div>
+                    {activeStep === 1 && (
+                        <button
+                            onClick={() => router.push("/cart?step=2", { scroll: false })}
+                            className="w-full bg-gray-700 hover:bg-gray-900 transition-all duration-300  text-white p-2 rounded-lg cursor-pointer flex items-center justify-center gap-2"
+                        >
+                            Continue <ArrowRight className="w-3 h-3" />
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default CartPage;
