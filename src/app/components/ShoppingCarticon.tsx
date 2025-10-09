@@ -8,10 +8,12 @@ const ShoppingCarticon = () => {
 
   const { cart } = useCartStore();
 
+  const totalCartQunatity = cart.reduce((acc, item) => acc + item.quantity, 0)
+
   return (
     <Link href="/cart" className='relative'>
       <ShoppingCart className='w-4 h-4 text-gray-600' />
-      <span className='absolute -top-3 -right-3 bg-amber-400 text-gray-600 rounded-full w-4 h-4 flex items-center justify-center font-medium'>{cart.length}</span>
+      <span className='absolute -top-3 -right-3 bg-amber-400 text-gray-600 rounded-full w-4 h-4 flex items-center justify-center font-medium'>{totalCartQunatity}</span>
     </Link>
   )
 }
