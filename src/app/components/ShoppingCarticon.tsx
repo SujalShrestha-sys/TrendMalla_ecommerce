@@ -1,13 +1,17 @@
 "use client"
+
 import React from 'react'
 import Link from 'next/link'
 import { ShoppingCart } from 'lucide-react'
-import useCartStore from '@/stores/cartStore'
+import useStore from '@/stores/cartStore'
 
 const ShoppingCarticon = () => {
 
-  const { cart } = useCartStore();
+  const { cart, hasHydrated } = useStore();
 
+  if (!hasHydrated) {
+    return null
+  }
   const totalCartQunatity = cart.reduce((acc, item) => acc + item.quantity, 0)
 
   return (

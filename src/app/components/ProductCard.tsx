@@ -12,14 +12,13 @@ const ProductCard = ({ product }: { product: ProductType }) => {
         size: product.sizes[0],
         color: product.colors[0]
     });
+    const { addToCart } = useCartStore();
 
     const handleProductType = ({ type, value }: { type: "size" | "color", value: string }) => {
         setProductTypes((prev) => ({
             ...prev, [type]: value,
         }))
     }
-
-    const { addToCart } = useCartStore();
 
     const handleAddToCart = () => {
         addToCart({
@@ -50,8 +49,6 @@ const ProductCard = ({ product }: { product: ProductType }) => {
                 {/**Product Types */}
                 <div className='flex items-center gap-4 text-xs'>
 
-
-
                     {/**SIzes */}
                     <div className='flex flex-col gap-1'>
                         <span className='text-gray-500'>Size</span>
@@ -69,7 +66,15 @@ const ProductCard = ({ product }: { product: ProductType }) => {
                         <span className='text-gray-500'>Color</span>
                         <div className='flex items-center gap-2' >
                             {product.colors.map((color) => (
-                                <div className={`border-1 cursor-pointer  rounded-full p-[1.2px]  ${productTypes.color === color ? "border-gray-400" : "border-gray-200"}`} key={color} onClick={(e) => handleProductType({ type: "color", value: color })}>
+                                <div className={`border-1 cursor-pointer  rounded-full p-[1.2px]  
+                                ${productTypes.color === color ? "border-gray-400" : "border-gray-200"}`}
+                                    key={color}
+                                    onClick={(e) => handleProductType(
+                                        {
+                                            type: "color", value: color
+                                        }
+                                    )
+                                    }>
                                     <div className='w-[14px] h-[14px] rounded-full' style={{ backgroundColor: color }}></div>
                                 </div>
                             ))}
@@ -82,9 +87,6 @@ const ProductCard = ({ product }: { product: ProductType }) => {
                     <button onClick={handleAddToCart} className='ring-1 ring-gray-200 shadow-lg rounded-md px-2 py-1 text-sm cursor-pointer hover:text-white hover:bg-black transition-all duration-300 flex items-center gap-2'><ShoppingCart />
                         Add to Cart</button>
                 </div>
-
-
-
             </div>
         </div>
     )

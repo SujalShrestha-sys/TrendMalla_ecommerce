@@ -29,7 +29,7 @@ const Categories = () => {
 
     const selectedCategory = searchParams.get("category");
 
-    const handleChange = (value: string | null) => {
+    const handleChange = (value: string) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set("category", value || "all");
         router.push(`${pathname}?${params.toString()}`, { scroll: false });

@@ -18,8 +18,6 @@ const PaymentForm = () => {
 
   }
 
-
-
   return <form onSubmit={handleSubmit(handlePaymentForm)} className='flex flex-col gap-4'>
     {/**Card Holder */}
     <div className='flex flex-col gap-1'>
@@ -62,8 +60,6 @@ const PaymentForm = () => {
       Checkout
       <ShoppingBag className='w-3 h-3' />
     </button>
-
-
   </form>
 }
 
